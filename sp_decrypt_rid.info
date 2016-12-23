@@ -1,0 +1,5 @@
+name = SP Decrypt RID
+description = Webform component that decryps an SP Referral ID (RID) on submission
+core = 7.x
+package = sp
+dependencies[] = webform

@@ -1,0 +1,33 @@
+<?php
+
+/** 
+ * Alter the form submission before it is saved. 
+ */
+function sp_decrypt_rid_webform_submission_presave($node, &$submission) {
+  
+  // Gather variables (No admin yet. Must be set in settings.php or with drush)
+  $decrypt_key  = variable_get('sp_decrypt_rid_key');
+  $target_forms = variable_get('sp_decrypt_rid_forms');
+
+  foreach ($target_forms as $target_form => $target_field)
+    if($node->nid == $target_form) {
+  	  if(isset($submission->data[$target_field][0]) && !empty($submission->data[$target_field][0])) {
+      $submission->data[$target_field][0] = _decrypt_rid($submission->data[$target_field][0],$decrypt_key);
+    }
+  }
+}
+
+/** 
+ * Decrypt the refered ID-information. 
+ */
+function _decrypt_rid($string,$key) {
+  $decoded = base64_decode($string);
+  if(!empty($decoded)) {
+    $result = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $decoded, MCRYPT_MODE_ECB);
+    if(!empty($result)) {
+      return $result; 
+    } else {
+      return 0;
+    }
+  }
+}
