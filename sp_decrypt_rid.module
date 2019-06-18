@@ -9,10 +9,12 @@ function sp_decrypt_rid_webform_submission_presave($node, &$submission) {
   $decrypt_key  = variable_get('sp_decrypt_rid_key');
   $target_forms = variable_get('sp_decrypt_rid_forms');
 
-  foreach ($target_forms as $target_form => $target_field)
-    if($node->nid == $target_form) {
-  	  if(isset($submission->data[$target_field][0]) && !empty($submission->data[$target_field][0])) {
-      $submission->data[$target_field][0] = _decrypt_rid($submission->data[$target_field][0],$decrypt_key);
+  if (!empty($target_forms) && !empty($decrypt_key)) {
+    foreach ($target_forms as $target_form => $target_field)
+      if($node->nid == $target_form) {
+            if(isset($submission->data[$target_field][0]) && !empty($submission->data[$target_field][0])) {
+        $submission->data[$target_field][0] = _decrypt_rid($submission->data[$target_field][0],$decrypt_key);
+      }
     }
   }
 }
